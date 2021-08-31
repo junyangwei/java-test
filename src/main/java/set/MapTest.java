@@ -2,8 +2,7 @@ package set;
 
 import common.Dog;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 集合 —— 映射练习Map
@@ -33,7 +32,8 @@ public class MapTest {
         System.out.println("Key of aaa: " + dogs.getOrDefault("aaa", dog3));
 
         // 重复对同一个key调用put方法
-        dogs.put("abc", dog4);
+        System.out.println("被替换abc：" + dogs.put("abc", dog4));
+        System.out.println("被替换aaa(不存在)：" + dogs.put("aaa", dog4));
         System.out.println(dogs);
 
         // 移除元素
@@ -46,5 +46,34 @@ public class MapTest {
         // 遍历映射的键和值
         // 需要注意的是TreeMap也实现了Map接口，遍历键和值时，会根据键的比较顺序按序遍历
         dogs.forEach((k, v) -> System.out.println("The key of " + k + ": " + v));
+
+        Map<String, Integer> counts = new HashMap<>();
+        counts.merge("color", 1, Integer::sum);
+        System.out.println(counts);
+        counts.merge("color", 1, Integer::sum);
+        System.out.println(counts);
+
+        // 获取映射视图三个方法练习：keySet, entrySet, values
+        Set<String> dogKeys = dogs.keySet();
+        dogKeys.forEach(System.out::println);
+
+        Set<Map.Entry<String, Dog>> dogEntries = dogs.entrySet();
+        dogEntries.forEach(entry -> {
+            String k = entry.getKey();
+            Dog v = entry.getValue();
+            System.out.println("key: " + k + ", value:" + v);
+        });
+
+        Collection<Dog> dogsCollection = dogs.values();
+        dogsCollection.forEach(System.out::println);
+
+        // 尝试在键集上调用迭代器的remove方法删除所有元素
+        System.out.println("Before: " + dogs);
+        Iterator<String> dogKeysIterator = dogKeys.iterator();
+        while (dogKeysIterator.hasNext()) {
+            dogKeysIterator.next();
+            dogKeysIterator.remove();
+        }
+        System.out.println("After: " + dogs);
     }
 }
