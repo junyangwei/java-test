@@ -1,8 +1,8 @@
 package set;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
+import common.Dog;
+
+import java.util.*;
 
 /**
  * 集合 —— 测试代码
@@ -27,5 +27,37 @@ public class Test {
         iter.set("D");
         System.out.println(staff);
         // AB -> A|B -> AC|B -> ACB| -> AC| -> A|C -> A|D
+
+        EnumSet<Weekday> always = EnumSet.allOf(Weekday.class);
+        EnumSet<Weekday> never = EnumSet.noneOf(Weekday.class);
+        EnumSet<Weekday> workday = EnumSet.range(Weekday.MONDAY, Weekday.FRIDAY);
+        EnumSet<Weekday> mwf = EnumSet.of(Weekday.MONDAY, Weekday.WEDNESDAY, Weekday.FRIDAY);
+
+        for (Weekday wd : always) {
+            System.out.print(wd + " ");
+        }
+        System.out.println();
+
+        for (Weekday nv : never) {
+            System.out.print(nv + " ");
+        }
+        System.out.println();
+
+        for (Weekday wod : workday) {
+            System.out.print(wod + " ");
+        }
+        System.out.println();
+
+        for (Weekday f : mwf) {
+            System.out.print(f + " ");
+        }
+
+        EnumMap<Weekday, Dog> dogInCharge = new EnumMap<>(Weekday.class);
+        dogInCharge.put(Weekday.MONDAY, new Dog());
+        dogInCharge.forEach(((weekday, dog) -> {
+            System.out.println("weekday:" + weekday + ", dog:" + dog);
+        }));
     }
+
+    enum Weekday { MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY };
 }
