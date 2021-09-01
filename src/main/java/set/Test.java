@@ -57,6 +57,20 @@ public class Test {
         dogInCharge.forEach(((weekday, dog) -> {
             System.out.println("weekday:" + weekday + ", dog:" + dog);
         }));
+
+        // 泛型集合很容易将错误类型的元素混入，导致出错
+        ArrayList<String> strings = new ArrayList<>();
+        ArrayList rawList = strings;
+        // 将错误类型插入时不会报错
+        rawList.add(new Date());
+        // 调用get方法并转换成指定类型时就会抛错
+        // String str = (String) rawList.get(0);
+
+        // 正确的方式：使用受查视图的方式探测add方法插入的是否是正确类型
+        List<String> safeStrings = Collections.checkedList(strings, String.class);
+        List rawList2 = safeStrings;
+        // 此时调用add方法就会抛错
+        rawList2.add(new Date());
     }
 
     enum Weekday { MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY };
