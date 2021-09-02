@@ -70,8 +70,114 @@ public class Test {
         List<String> safeStrings = Collections.checkedList(strings, String.class);
         List rawList2 = safeStrings;
         // 此时调用add方法就会抛错
-        rawList2.add(new Date());
+        // rawList2.add(new Date());
+
+        // 找数组最大元素
+        Integer[] numbers = new Integer[]{ 3, 2, 5, 1, 4 };
+        System.out.println("[max] max number: " + max(numbers));
+        System.out.println("[maxCommon] max number: " + maxCommon(Arrays.asList(numbers)));
+
+        // 找数组列表最大值
+        ArrayList<String> stringList = new ArrayList<>();
+        stringList.add("c");
+        stringList.add("b");
+        stringList.add("f");
+        stringList.add("a");
+        stringList.add("e");
+        System.out.println("[max] max string: " + max(stringList));
+        System.out.println("[maxCommon] max string: " + maxCommon(stringList));
+
+        // 找链表最大值
+        LinkedList<String> stringLinkedList = new LinkedList<>();
+        stringLinkedList.add("C");
+        stringLinkedList.add("B");
+        stringLinkedList.add("F");
+        stringLinkedList.add("A");
+        stringLinkedList.add("E");
+        System.out.println("[max] max linked string: " + max(stringLinkedList));
+        System.out.println("[maxCommon] max linked string: " + maxCommon(stringLinkedList));
     }
 
     enum Weekday { MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY };
+
+    /**
+     * 泛型集合 —— 找数组的最大值
+     * @param a 数组
+     * @param <T> 数组对象要求实现了Comparable接口
+     * @return 数组对象的最大值
+     */
+    public static <T extends Comparable> T max(T[] a) {
+        if (a.length == 0) {
+            throw new NoSuchElementException();
+        }
+        T largest = a[0];
+        for (int i = 1; i < a.length; i++) {
+            if (largest.compareTo(a[i]) < 0) {
+                largest = a[i];
+            }
+        }
+        return largest;
+    }
+
+    /**
+     * 泛型集合 —— 找数组列表的最大值
+     * @param a 数组列表
+     * @param <T> 数组列表对象要求实现了Comparable接口
+     * @return 数组列表对象的最大值
+     */
+    public static <T extends Comparable> T max(ArrayList<T> a) {
+        if (a.size() == 0) {
+            throw new NoSuchElementException();
+        }
+        T largest = a.get(0);
+        for (int i = 1; i < a.size(); i++) {
+            if (largest.compareTo(a.get(i)) < 0) {
+                largest = a.get(i);
+            }
+        }
+        return largest;
+    }
+
+    /**
+     * 泛型集合 —— 找链表的最大值
+     * @param a 链表
+     * @param <T> 链表对象要求实现了Comparable接口
+     * @return 链表对象的最大值
+     */
+    public static <T extends Comparable> T max(LinkedList<T> a) {
+        if (a.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        Iterator<T> iter = a.iterator();
+        T largest = iter.next();
+        while (iter.hasNext()) {
+            T next = iter.next();
+            if (largest.compareTo(next) < 0) {
+                largest = next;
+            }
+        }
+        return largest;
+    }
+
+    /**
+     * 泛型集合 —— 找数组/数组列表/链表的最大值【通用方法】
+     *   - 测试后发现这是真.通用方法，根本不需要写额外三个max方法
+     * @param c 实现了Collection接口的对象
+     * @param <T> 类型，并要求它实现了Comparable接口
+     * @return 数组/数组列表/链表的最大值
+     */
+    public static <T extends Comparable> T maxCommon(Collection<T> c) {
+        if (c.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        Iterator<T> iter = c.iterator();
+        T largest = iter.next();
+        while (iter.hasNext()) {
+            T next = iter.next();
+            if (largest.compareTo(next) < 0) {
+                largest = next;
+            }
+        }
+        return largest;
+    }
 }
