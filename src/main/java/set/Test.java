@@ -96,6 +96,24 @@ public class Test {
         stringLinkedList.add("E");
         System.out.println("[max] max linked string: " + max(stringLinkedList));
         System.out.println("[maxCommon] max linked string: " + maxCommon(stringLinkedList));
+
+        // 逆序排序numbers
+        Arrays.sort(numbers, Comparator.reverseOrder());
+        // 逆序排序stringLinkedList
+        stringLinkedList.sort(Comparator.naturalOrder());
+        System.out.println(Arrays.toString(numbers));
+        System.out.println(stringLinkedList);
+
+        // 根据color逆序排序后，再根据age顺序排序
+        ArrayList<Dog> dogs = new ArrayList<>();
+        dogs.add(new Dog("black", "JY", 3));
+        dogs.add(new Dog("yellow", "JK", 2));
+        dogs.add(new Dog("white", "LL", 4));
+        dogs.add(new Dog("black", "JL", 1));
+        dogs.sort(Comparator.comparing(Dog::getColor, Collections.reverseOrder()).thenComparing(Dog::getAge));
+        System.out.println(dogs);
+        dogs.sort(Comparator.comparing(Dog::getColor).reversed().thenComparing(Dog::getAge));
+        System.out.println(dogs);
     }
 
     enum Weekday { MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY };
