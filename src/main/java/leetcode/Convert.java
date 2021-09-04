@@ -9,7 +9,7 @@ import java.util.List;
  * @author junyangwei
  * @date 2021-09-04
  */
-public class Solution {
+public class Convert {
     /*
         题目分析：
         - 首先，这道题是将一个字符串，转换成指定行数的，类似反N字结构的形状；再由第一行
@@ -86,7 +86,7 @@ public class Solution {
         tests.add(new ConvertTest("AB", 1, "AB"));
         tests.add(new ConvertTest("AB", 3, "AB"));
 
-        Solution solution = new Solution();
+        Convert solution = new Convert();
         for (ConvertTest test : tests) {
             String result = solution.convert(test.s, test.numRow);
             System.out.println("测试结果：" + test.result.equals(result));
