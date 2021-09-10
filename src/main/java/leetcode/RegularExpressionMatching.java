@@ -2,143 +2,76 @@ package leetcode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
+ * LeetCode —— 模拟正则匹配
+ * 题目源：https://leetcode.com/problems/regular-expression-matching/
  * @author junyangwei
  * @date 2021-09-09
  */
 public class RegularExpressionMatching {
-    /*
-        题目要求：
-        1. 实现正则匹配"."：匹配任意单个字符
-        2. 实现正则匹配"*"：匹配前面字符一个或多个
-
-        题目分析：
-        1. 首先，遍历字符串p，将字符串中的*和.字符给拆分出来
-        1. 设置两个索引遍历项，字符串的和匹配项
-        2.
-
-        mis*sis*ssip*.拆分成：["mi", "s*", "ssp", "i*", "."];
-
-    */
-    public boolean isMatch1(String s, String p) {
-        return Pattern.matches(p, s);
-    }
 
     public boolean isMatch(String s, String p) {
-        char[] sChars = s.toCharArray();
-        char[] pChars = p.toCharArray();
-        int indexS = 0;
-        int indexP = 0;
-        int matchIndexS = 0;
-        while (indexP <= pChars.length - 1) {
-            if (indexP == pChars.length - 1 && pChars[indexP] != '.') {
-                if (sChars[sChars.length - 1] != pChars[indexP]) {
+        int indexS = s.length() - 1;
+        int indexP = p.length() - 1;
+        return helper(s, p, indexS, indexP);
+    }
+
+    public boolean helper(String s, String p, int indexS, int indexP) {
+        // 从后往前遍历
+        while (indexS >= -1 && indexP >= 0) {
+            if (p.charAt(indexP) != '*') {
+                /*
+                    不匹配条件：
+                    1. 字符串索引已到结尾
+                    2. 指定索引字符和匹配项不符
+                        - 应匹配的字符不为.（符号.能匹配任意字符）
+                        - 字符串指定字符 和 应匹配的字符不相同
+                 */
+                boolean noMatch = indexS == -1
+                        || (p.charAt(indexP) != '.' && s.charAt(indexS) != p.charAt(indexP));
+                if (noMatch) {
                     return false;
                 }
+                indexS--;
+                indexP--;
+            } else {
+                /*
+                    嵌套调用helper：
+                    - 出现类似a*这种情况则表示可为0个，也可为多个，可以暂时直接跳过
+                    - 直接检测a*这种匹配之前的匹配项
+                    - 如匹配项是ba*这种情况，则直接跳过a*，先从b开始匹配
+                    - 若匹配成功则直接返回true（嵌套的所有匹配都已成功）
+                 */
+                if (helper(s, p, indexS, indexP - 2)) {
+                    return true;
+                }
+                /*
+                    当嵌套调用helper失败时：
+                    - 如要匹配字符串ba，匹配项为：ba*，此时会优先将字符串末尾的a与匹配项b（a*的前一位）进行比较
+                    - 此时返回false，则进行下面的校验
+                    - 那么进行校验，不匹配的条件是:
+                        1. 字符串索引已到结尾
+                        2. 指定索引字符和后一位的匹配项不符（拿a与匹配项*的前一位a进行比较）
+                            - 应匹配的字符不为.（符号.能匹配任意字符）
+                            - 字符串指定字符 和 指定的应匹配字符不同
+                 */
+                boolean noMatch = indexS == -1
+                        || (p.charAt(indexP - 1) != '.' && s.charAt(indexS) != p.charAt(indexP - 1));
+                if (noMatch) {
+                    return false;
+                }
+
+                // 如果匹配成功了，则拿indexS的下一位继续进行比较
+                return helper(s, p, indexS - 1, indexP);
             }
-            if (indexS > sChars.length - 1) {
-                if (indexP != (pChars.length - 1) && pChars[indexP + 1] == '*') {
-                    indexP = indexP + 2;
-                    continue;
-                }
-                return false;
-            }
-
-            if (indexP != (pChars.length - 1) && pChars[indexP + 1] == '*') {
-                char pChar = pChars[indexP];
-                indexP = indexP + 2;
-
-                // 处理特殊情况 .*，匹配所有字符的情况，已匹配字符串直接为总数
-                if (pChar == '.') {
-                    matchIndexS = sChars.length;
-                    continue;
-                }
-
-                // 若匹配项已完全匹配，则可直接跳过
-                if (matchIndexS >= sChars.length) {
-                    continue;
-                }
-
-
-                if (matchIndexS > indexS && matchIndexS < sChars.length) {
-                    boolean isMatch = false;
-                    while (indexS <= sChars.length - 1 && indexS <= matchIndexS + 1) {
-                        if (sChars[indexS] == pChar) {
-                            isMatch = true;
-                            indexS++;
-                            if (matchIndexS < indexS) {
-                                matchIndexS++;
-                            }
-                            break;
-                        }
-                        indexS++;
-                    }
-                    if (!isMatch) return false;
-                    continue;
-                }
-
-                // 若跟下一项不配也可直接跳过
-                if (indexS < sChars.length - 1 && pChar != sChars[indexS]) {
-                    continue;
-                }
-
-                // 更新实际已匹配项，感觉这里还可以优化！！！
-                int rIndexS = indexS;
-                while (rIndexS <= sChars.length - 1) {
-                    if (pChar == sChars[rIndexS] && rIndexS >= matchIndexS) {
-                        rIndexS++;
-                        matchIndexS++;
-                        continue;
-                    }
-                    break;
-                }
-                continue;
-            }
-
-            if (pChars[indexP] == '.') {
-                indexS++;
-                indexP++;
-                if (matchIndexS < sChars.length) matchIndexS++;
-                continue;
-            }
-
-            if (matchIndexS > indexS && matchIndexS <= sChars.length) {
-                boolean isMatch = false;
-                while (indexS <= sChars.length - 1 && indexS <= matchIndexS + 1) {
-                    if (sChars[indexS] == pChars[indexP]) {
-                        isMatch = true;
-                        indexS++;
-                        if (matchIndexS < indexS) {
-                            matchIndexS++;
-                        }
-                        break;
-                    }
-                    indexS++;
-                }
-                if (!isMatch) return false;
-                indexP++;
-                continue;
-            }
-
-            if (pChars[indexP] == '.' || pChars[indexP] == sChars[indexS]) {
-                indexS++;
-                indexP++;
-                if (matchIndexS < indexS) {
-                    matchIndexS++;
-                }
-                continue;
-            }
-
-            return false;
         }
 
-        if (matchIndexS <= sChars.length - 1) {
+        if (indexS == -1 && indexP == -1) {
+            return true;
+        } else {
             return false;
         }
-
-        return true;
     }
 
     /**
@@ -147,8 +80,16 @@ public class RegularExpressionMatching {
     public static void main(String[] args) {
         List<IsMatchTest> tests = new ArrayList<>();
         // 变更遍历索引起点条件：字符匹配、符号"."匹配
-        tests.add(new IsMatchTest("acaabbaccbbacaabbbb", "a*.*b*.*a*aa*a*", false));
-        tests.add(new IsMatchTest("bbbba", ".*b", false));
+        tests.add(new IsMatchTest("bbbba", "b*.", true));
+        tests.add(new IsMatchTest("bbbba", "b*..", true));
+        tests.add(new IsMatchTest("bbbba", "b*..", true));
+        tests.add(new IsMatchTest("bbbba", "b*...", true));
+        tests.add(new IsMatchTest("bbbba", "b*....", true));
+        tests.add(new IsMatchTest("bbbba", "b*.....", true));
+        tests.add(new IsMatchTest("bbbba", "b*.ba", true));
+        tests.add(new IsMatchTest("bbbba", "b*b.ba", true));
+        tests.add(new IsMatchTest("acaabbaccbbacaabbbba", "a*.*b*.*a*ba*a*", true));
+        tests.add(new IsMatchTest("bbbba", ".*", true));
         tests.add(new IsMatchTest("bbbba", ".*a*a", true));
         tests.add(new IsMatchTest("aaca", "ab*a*c*a", true));
         tests.add(new IsMatchTest("aaa", "ab*a*c*a", true));
@@ -159,6 +100,7 @@ public class RegularExpressionMatching {
         tests.add(new IsMatchTest("aa", "a", false));
         tests.add(new IsMatchTest("aa", "a*", true));
         tests.add(new IsMatchTest("ab", ".*", true));
+        tests.add(new IsMatchTest("ab", ".*ab", true));
         tests.add(new IsMatchTest("aab", "c*a*b", true));
         tests.add(new IsMatchTest("mississippi", "mis*is*p*.", false));
         tests.add(new IsMatchTest("mississippi", "mis*sis*issip*.", false));
