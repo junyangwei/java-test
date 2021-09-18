@@ -36,7 +36,7 @@ public class JvmClassLoaderPrintPath {
 
         /*
             扩展类加载器
-            - 按照层级的逻辑关系，应用类加载器的父类，就是扩展类加载器
+            - 按照层级的逻辑关系，应用类加载器的父级加载器，就是扩展类加载器
             - 可以通过类的名字.class.getClassLoader().getParent()获得
          */
         printClassLoader("扩展类加载器", JvmClassLoaderPrintPath.class.getClassLoader().getParent());
@@ -51,12 +51,12 @@ public class JvmClassLoaderPrintPath {
     }
 
     /*
-       URLClassLoader 是应用类加载器和扩展类加载器的父类
+       URLClassLoader 是 应用类加载器 和 扩展类加载器 的委托父级加载器
        - 可通过反射的方式，把它们作为URLClassLoader
        - 拿到URLClassLoader里面的一个字段 ucp
        - 再拿到 ucp 字段里隐藏的一个所有加载路径的列表 paths 字段
        - 之后将 paths 字段作为List的对象打印出来
-       - 最终达到将应用类加载器和扩展类加载器内部加载的路径细节全部打印出来的目的
+       - 最终达到将 应用类加载器 和 扩展类加载器 内部加载的路径细节全部打印出来的目的
     */
 
     private static void printURLForClassLoader(ClassLoader classLoader) {
