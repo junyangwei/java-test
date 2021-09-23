@@ -22,7 +22,7 @@ public class KeylessEntry {
         /**
          * 重写equals方法，保证id相等就是相同的对象
          *  - 如果去除这个方法，那么执行main方法报：OutOfMemoryError: GC overhead limit exceeded
-         *  - 因为每次new Key它的hashCode都是不同的
+         *  - 因为没有重写 equals 方法，在HashMap的桶中比较时，会调用Object.equals判断为不同
          * @param o
          */
         @Override
